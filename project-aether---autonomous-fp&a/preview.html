@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Aether | Autonomous FP&A - Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        aether: {
+                            900: 'rgba(255, 255, 255, 0.4)',
+                            800: 'rgba(255, 255, 255, 0.75)',
+                            700: 'rgba(203, 213, 225, 0.5)',
+                            accent: '#3b82f6',
+                            success: '#10b981',
+                            warning: '#f59e0b',
+                            danger: '#ef4444',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: radial-gradient(circle at 10% 20%, rgb(239, 246, 255) 0%, rgb(241, 245, 249) 90%);
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .sidebar {
+            background-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .nav-item {
+            transition: all 0.2s;
+        }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+        .nav-item.active {
+            border-left: 3px solid #3b82f6;
+        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.5); }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="h-screen overflow-hidden">
+    <div class="flex h-full">
+        <!-- Sidebar -->
+        <aside class="sidebar w-64 h-full fixed left-0 top-0 flex flex-col z-10">
+            <div class="p-6 border-b border-slate-200/50">
+                <h1 class="text-xl font-bold text-slate-800">Project Aether</h1>
+                <p class="text-xs text-slate-500 mt-1">Autonomous FP&A Platform</p>
+            </div>
+            <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+                <a href="#" class="nav-item active flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-700">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
+                    <i data-lucide="bot" class="w-5 h-5 mr-3"></i>
+                    AI Agent
+                </a>
+                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
+                    <i data-lucide="git-branch" class="w-5 h-5 mr-3"></i>
+                    Scenarios
+                </a>
+                <div class="pt-4 pb-2">
+                    <p class="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Analysis</p>
+                </div>
+                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
+                    <i data-lucide="trending-up" class="w-5 h-5 mr-3"></i>
+                    Revenue
+                </a>
+                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
+                    <i data-lucide="wallet" class="w-5 h-5 mr-3"></i>
+                    Cost
+                </a>
+                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
+                    <i data-lucide="bar-chart-2" class="w-5 h-5 mr-3"></i>
+                    Sales
+                </a>
+                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
+                    <i data-lucide="megaphone" class="w-5 h-5 mr-3"></i>
+                    Marketing
+                </a>
+                <div class="pt-4 pb-2">
+                    <p class="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Platform</p>
+                </div>
+                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
+                    <i data-lucide="database" class="w-5 h-5 mr-3"></i>
+                    Data Fabric
+                </a>
+                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
+                    <i data-lucide="shield-check" class="w-5 h-5 mr-3"></i>
+                    Governance
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 ml-64 h-full overflow-y-auto p-8">
+            <!-- Header -->
+            <div class="flex justify-between items-end mb-6">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Strategic Command Center</h2>
+                    <p class="text-slate-500 mt-1">CFO Integrated Financial View</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="px-3 py-1.5 glass-card text-slate-600 text-xs rounded-lg flex items-center">
+                        <i data-lucide="compass" class="w-4 h-4 mr-2 text-blue-500"></i>
+                        Rolling Forecast: Active
+                    </span>
+                </div>
+            </div>
+
+            <!-- AI Insight Banner -->
+            <div class="glass-card rounded-xl p-5 flex items-start space-x-4 mb-6">
+                <div class="p-2 bg-blue-100 rounded-lg">
+                    <i data-lucide="activity" class="w-5 h-5 text-blue-600"></i>
+                </div>
+                <div>
+                    <h4 class="text-slate-800 font-semibold text-sm mb-1">AI Strategic Guidance</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        With a Rule of 40 score of 51, you're outperforming industry benchmarks. Focus on maintaining growth momentum while protecting margins—consider strategic investments in automation to sustain the -3% variance recovery trajectory.
+                    </p>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                <div class="glass-card p-5 rounded-xl hover:shadow-lg transition-all cursor-pointer group">
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold">Total YTD Revenue</p>
+                        <i data-lucide="dollar-sign" class="w-4 h-4 text-slate-400"></i>
+                    </div>
+                    <div class="flex items-baseline justify-between">
+                        <span class="text-2xl font-bold text-slate-800">$47.2M</span>
+                        <span class="flex items-center text-sm font-medium text-emerald-600">
+                            <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
+                            +24%
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2">vs Previous YTD</p>
+                </div>
+                <div class="glass-card p-5 rounded-xl hover:shadow-lg transition-all cursor-pointer group">
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold">In-Year Closed ACV</p>
+                        <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                    </div>
+                    <div class="flex items-baseline justify-between">
+                        <span class="text-2xl font-bold text-slate-800">$12.4M</span>
+                        <span class="flex items-center text-sm font-medium text-blue-600">
+                            <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
+                            +18%
+                        </span>
+                    </div>
+                </div>
+                <div class="glass-card p-5 rounded-xl hover:shadow-lg transition-all cursor-pointer group">
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold">EBITDA Margin</p>
+                        <i data-lucide="target" class="w-4 h-4 text-slate-400"></i>
+                    </div>
+                    <div class="flex items-baseline justify-between">
+                        <span class="text-2xl font-bold text-slate-800">21%</span>
+                        <span class="flex items-center text-sm font-medium text-emerald-600">
+                            <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
+                            +2.5%
+                        </span>
+                    </div>
+                </div>
+                <div class="glass-card p-5 rounded-xl hover:shadow-lg transition-all cursor-pointer group">
+                    <div class="flex justify-between items-start mb-2">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold">Rule of 40</p>
+                        <i data-lucide="trending-up" class="w-4 h-4 text-slate-400"></i>
+                    </div>
+                    <div class="flex items-baseline justify-between">
+                        <span class="text-2xl font-bold text-slate-800">51</span>
+                        <span class="flex items-center text-sm font-medium text-blue-600">
+                            <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
+                            +3
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Revenue Forecast Chart -->
+                <div class="glass-card rounded-xl p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-bold text-slate-800">Rolling 12-Month Forecast</h3>
+                    </div>
+                    <div class="h-[300px]">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Cash Flow Chart -->
+                <div class="glass-card rounded-xl p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-bold text-slate-800">Cash Flow Projection</h3>
+                        <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-lg font-medium">Runway: 18 Months</span>
+                    </div>
+                    <div class="h-[300px]">
+                        <canvas id="cashFlowChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Rule of 40 Chart -->
+                <div class="lg:col-span-2 glass-card rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">The "Rule of 40" Trajectory</h3>
+                    <p class="text-sm text-slate-500 mb-6">Balancing Growth Rate vs. Profit Margin (Target &gt; 40%)</p>
+                    <div class="h-[280px]">
+                        <canvas id="rule40Chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Strategic Risks -->
+                <div class="glass-card rounded-xl p-6 flex flex-col">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Strategic Risks</h3>
+                    <div class="space-y-4 flex-1">
+                        <div class="p-4 rounded-lg bg-white/50 border border-slate-200 hover:border-slate-300 cursor-pointer transition-all group">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center space-x-2">
+                                    <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-500"></i>
+                                    <span class="font-medium text-slate-700 text-sm">Revenue Variance</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-2">Enterprise segment underperforming by 8% vs. forecast due to delayed Q3 deals.</p>
+                            <div class="mt-2 flex justify-between items-center">
+                                <span class="text-rose-600 font-mono text-xs font-bold">Impact: $450,000</span>
+                                <span class="text-xs text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity flex items-center font-medium">
+                                    Analyze <i data-lucide="arrow-right" class="w-3 h-3 ml-1"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-lg bg-white/50 border border-slate-200 hover:border-slate-300 cursor-pointer transition-all group">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center space-x-2">
+                                    <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
+                                    <span class="font-medium text-slate-700 text-sm">Cost Overrun</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-2">Cloud infrastructure costs exceeding budget by 12% month-over-month.</p>
+                            <div class="mt-2 flex justify-between items-center">
+                                <span class="text-rose-600 font-mono text-xs font-bold">Impact: $125,000</span>
+                                <span class="text-xs text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity flex items-center font-medium">
+                                    Analyze <i data-lucide="arrow-right" class="w-3 h-3 ml-1"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [
+                    {
+                        label: 'Actual',
+                        data: [3800, 4100, 4300, 4000, 4500, 4700, null, null, null, null, null, null],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 4,
+                    },
+                    {
+                        label: 'Forecast',
+                        data: [null, null, null, null, null, null, 4900, 5100, 5300, 5500, 5700, 6000],
+                        backgroundColor: '#93c5fd',
+                        borderRadius: 4,
+                    },
+                    {
+                        label: 'Budget',
+                        data: [3900, 4000, 4200, 4100, 4600, 4800, 5000, 5200, 5400, 5600, 5800, 6100],
+                        type: 'line',
+                        borderColor: '#f59e0b',
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { usePointStyle: true, padding: 20 }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 3000,
+                        grid: { color: '#e2e8f0' },
+                        ticks: { callback: value => '$' + value }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Cash Flow Chart
+        const cashCtx = document.getElementById('cashFlowChart').getContext('2d');
+        new Chart(cashCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [
+                    {
+                        label: 'Net Cash Flow',
+                        data: [580, 620, 650, 600, 680, 710],
+                        backgroundColor: '#10b981',
+                        borderRadius: 4,
+                    },
+                    {
+                        label: 'Burn Rate Threshold',
+                        data: [-150, -150, -150, -150, -150, -150],
+                        type: 'line',
+                        borderColor: '#ef4444',
+                        borderDash: [5, 5],
+                        fill: false,
+                        pointRadius: 0,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { usePointStyle: true, padding: 20 }
+                    }
+                },
+                scales: {
+                    y: {
+                        grid: { color: '#e2e8f0' },
+                        ticks: { callback: value => '$' + value }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Rule of 40 Scatter Chart
+        const rule40Ctx = document.getElementById('rule40Chart').getContext('2d');
+        new Chart(rule40Ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: 'Competitors',
+                        data: [
+                            { x: 20, y: 10 },
+                            { x: 40, y: -10 },
+                            { x: 10, y: 25 },
+                            { x: 35, y: 5 },
+                            { x: 15, y: 20 }
+                        ],
+                        backgroundColor: '#94a3b8',
+                        pointRadius: 8,
+                    },
+                    {
+                        label: 'Us (Current)',
+                        data: [{ x: 21, y: 30 }],
+                        backgroundColor: '#3b82f6',
+                        pointRadius: 12,
+                        pointStyle: 'star',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { usePointStyle: true, padding: 20 }
+                    },
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                yMin: -20,
+                                yMax: 60,
+                                xMin: 0,
+                                xMax: 60,
+                                borderColor: '#10b981',
+                                borderWidth: 2,
+                                borderDash: [6, 6],
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Growth %' },
+                        min: 0,
+                        max: 60,
+                        grid: { color: '#e2e8f0' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Margin %' },
+                        min: -20,
+                        max: 40,
+                        grid: { color: '#e2e8f0' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
