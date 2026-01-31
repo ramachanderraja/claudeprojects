@@ -323,7 +323,7 @@ const CostView: React.FC = () => {
                                 <span className="text-sm font-bold text-white">Booking Class</span>
                                 <span className="text-xs text-rose-400 font-bold">High Severity</span>
                             </div>
-                            <p className="text-xs text-slate-400">3 Executives booked First Class on domestic routes (NYC > SFO).</p>
+                            <p className="text-xs text-slate-400">3 Executives booked First Class on domestic routes (NYC → SFO).</p>
                         </div>
                         <div className="p-3 bg-aether-900/50 rounded-lg border border-aether-700">
                             <div className="flex justify-between items-start mb-1">

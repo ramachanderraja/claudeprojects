@@ -174,9 +174,9 @@ const SECTIONS = [
                         <div className="p-5 bg-aether-900/50 rounded-xl border border-aether-700">
                              <h4 className="font-bold text-white mb-2">Stalled Opportunities</h4>
                              <p className="text-sm text-slate-400">
-                                Proactively alerts on deals stuck in a stage for too long (>90 days). 
-                                <span className="text-orange-400 font-bold"> Orange</span> alerts for >120 days, 
-                                <span className="text-rose-400 font-bold"> Red</span> alerts for >150 days.
+                                Proactively alerts on deals stuck in a stage for too long (&gt;90 days).
+                                <span className="text-orange-400 font-bold"> Orange</span> alerts for &gt;120 days,
+                                <span className="text-rose-400 font-bold"> Red</span> alerts for &gt;150 days.
                              </p>
                         </div>
                     </div>
