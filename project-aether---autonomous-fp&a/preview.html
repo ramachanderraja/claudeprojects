@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Aether | Autonomous FP&A - Preview</title>
+    <title>Project Aether | Autonomous FP&A - Full Preview</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -16,14 +16,7 @@
                             900: 'rgba(255, 255, 255, 0.4)',
                             800: 'rgba(255, 255, 255, 0.75)',
                             700: 'rgba(203, 213, 225, 0.5)',
-                            accent: '#3b82f6',
-                            success: '#10b981',
-                            warning: '#f59e0b',
-                            danger: '#ef4444',
                         }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
                     }
                 }
             }
@@ -31,36 +24,24 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            background: radial-gradient(circle at 10% 20%, rgb(239, 246, 255) 0%, rgb(241, 245, 249) 90%);
-            font-family: 'Inter', sans-serif;
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-        }
-        .sidebar {
-            background-color: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(255, 255, 255, 0.6);
-        }
-        .nav-item {
-            transition: all 0.2s;
-        }
-        .nav-item:hover, .nav-item.active {
-            background: rgba(59, 130, 246, 0.1);
-            color: #3b82f6;
-        }
-        .nav-item.active {
-            border-left: 3px solid #3b82f6;
-        }
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        * { box-sizing: border-box; }
+        body { background: radial-gradient(circle at 10% 20%, rgb(239, 246, 255) 0%, rgb(241, 245, 249) 90%); font-family: 'Inter', sans-serif; }
+        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05); border: 1px solid rgba(255, 255, 255, 0.6); }
+        .sidebar { background-color: rgba(255, 255, 255, 0.5); backdrop-filter: blur(20px); border-right: 1px solid rgba(255, 255, 255, 0.6); }
+        .nav-item { transition: all 0.2s; cursor: pointer; }
+        .nav-item:hover, .nav-item.active { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .nav-item.active { border-left: 3px solid #3b82f6; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 100; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { animation: zoomIn 0.2s ease-out; }
+        @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .view { display: none; }
+        .view.active { display: block; }
+        ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.5); }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .typing-dots::after { content: '...'; animation: dots 1.5s infinite; }
+        @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60%, 100% { content: '...'; } }
     </style>
 </head>
 <body class="h-screen overflow-hidden">
@@ -71,206 +52,446 @@
                 <h1 class="text-xl font-bold text-slate-800">Project Aether</h1>
                 <p class="text-xs text-slate-500 mt-1">Autonomous FP&A Platform</p>
             </div>
-            <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
-                <a href="#" class="nav-item active flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-700">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
-                    Dashboard
+            <nav class="flex-1 p-4 space-y-1 overflow-y-auto" id="nav">
+                <a data-view="dashboard" class="nav-item active flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-700">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>Dashboard
                 </a>
-                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
-                    <i data-lucide="bot" class="w-5 h-5 mr-3"></i>
-                    AI Agent
+                <a data-view="ai-agent" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
+                    <i data-lucide="bot" class="w-5 h-5 mr-3"></i>AI Agent
                 </a>
-                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
-                    <i data-lucide="git-branch" class="w-5 h-5 mr-3"></i>
-                    Scenarios
+                <a data-view="scenarios" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
+                    <i data-lucide="git-branch" class="w-5 h-5 mr-3"></i>Scenarios
                 </a>
-                <div class="pt-4 pb-2">
-                    <p class="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Analysis</p>
-                </div>
-                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
-                    <i data-lucide="trending-up" class="w-5 h-5 mr-3"></i>
-                    Revenue
+                <div class="pt-4 pb-2"><p class="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Analysis</p></div>
+                <a data-view="revenue" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
+                    <i data-lucide="trending-up" class="w-5 h-5 mr-3"></i>Revenue
                 </a>
-                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
-                    <i data-lucide="wallet" class="w-5 h-5 mr-3"></i>
-                    Cost
+                <a data-view="cost" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
+                    <i data-lucide="wallet" class="w-5 h-5 mr-3"></i>Cost
                 </a>
-                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
-                    <i data-lucide="bar-chart-2" class="w-5 h-5 mr-3"></i>
-                    Sales
+                <a data-view="sales" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
+                    <i data-lucide="bar-chart-2" class="w-5 h-5 mr-3"></i>Sales
                 </a>
-                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
-                    <i data-lucide="megaphone" class="w-5 h-5 mr-3"></i>
-                    Marketing
+                <a data-view="marketing" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
+                    <i data-lucide="megaphone" class="w-5 h-5 mr-3"></i>Marketing
                 </a>
-                <div class="pt-4 pb-2">
-                    <p class="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Platform</p>
-                </div>
-                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
-                    <i data-lucide="database" class="w-5 h-5 mr-3"></i>
-                    Data Fabric
+                <div class="pt-4 pb-2"><p class="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Platform</p></div>
+                <a data-view="data-fabric" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
+                    <i data-lucide="database" class="w-5 h-5 mr-3"></i>Data Fabric
                 </a>
-                <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
-                    <i data-lucide="shield-check" class="w-5 h-5 mr-3"></i>
-                    Governance
+                <a data-view="governance" class="nav-item flex items-center px-4 py-3 rounded-lg text-sm font-medium text-slate-600">
+                    <i data-lucide="shield-check" class="w-5 h-5 mr-3"></i>Governance
                 </a>
             </nav>
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 ml-64 h-full overflow-y-auto p-8">
-            <!-- Header -->
-            <div class="flex justify-between items-end mb-6">
-                <div>
-                    <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Strategic Command Center</h2>
-                    <p class="text-slate-500 mt-1">CFO Integrated Financial View</p>
-                </div>
-                <div class="flex items-center space-x-3">
+        <main class="flex-1 ml-64 h-full overflow-y-auto" id="main-content">
+
+            <!-- Dashboard View -->
+            <div id="view-dashboard" class="view active p-8">
+                <div class="flex justify-between items-end mb-6">
+                    <div>
+                        <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Strategic Command Center</h2>
+                        <p class="text-slate-500 mt-1">CFO Integrated Financial View</p>
+                    </div>
                     <span class="px-3 py-1.5 glass-card text-slate-600 text-xs rounded-lg flex items-center">
-                        <i data-lucide="compass" class="w-4 h-4 mr-2 text-blue-500"></i>
-                        Rolling Forecast: Active
+                        <i data-lucide="compass" class="w-4 h-4 mr-2 text-blue-500"></i>Rolling Forecast: Active
                     </span>
                 </div>
-            </div>
 
-            <!-- AI Insight Banner -->
-            <div class="glass-card rounded-xl p-5 flex items-start space-x-4 mb-6">
-                <div class="p-2 bg-blue-100 rounded-lg">
-                    <i data-lucide="activity" class="w-5 h-5 text-blue-600"></i>
-                </div>
-                <div>
-                    <h4 class="text-slate-800 font-semibold text-sm mb-1">AI Strategic Guidance</h4>
-                    <p class="text-slate-600 text-sm leading-relaxed">
-                        With a Rule of 40 score of 51, you're outperforming industry benchmarks. Focus on maintaining growth momentum while protecting margins—consider strategic investments in automation to sustain the -3% variance recovery trajectory.
-                    </p>
-                </div>
-            </div>
-
-            <!-- KPI Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-                <div class="glass-card p-5 rounded-xl hover:shadow-lg transition-all cursor-pointer group">
-                    <div class="flex justify-between items-start mb-2">
-                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold">Total YTD Revenue</p>
-                        <i data-lucide="dollar-sign" class="w-4 h-4 text-slate-400"></i>
-                    </div>
-                    <div class="flex items-baseline justify-between">
-                        <span class="text-2xl font-bold text-slate-800">$47.2M</span>
-                        <span class="flex items-center text-sm font-medium text-emerald-600">
-                            <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
-                            +24%
-                        </span>
-                    </div>
-                    <p class="text-xs text-slate-400 mt-2">vs Previous YTD</p>
-                </div>
-                <div class="glass-card p-5 rounded-xl hover:shadow-lg transition-all cursor-pointer group">
-                    <div class="flex justify-between items-start mb-2">
-                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold">In-Year Closed ACV</p>
-                        <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
-                    </div>
-                    <div class="flex items-baseline justify-between">
-                        <span class="text-2xl font-bold text-slate-800">$12.4M</span>
-                        <span class="flex items-center text-sm font-medium text-blue-600">
-                            <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
-                            +18%
-                        </span>
-                    </div>
-                </div>
-                <div class="glass-card p-5 rounded-xl hover:shadow-lg transition-all cursor-pointer group">
-                    <div class="flex justify-between items-start mb-2">
-                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold">EBITDA Margin</p>
-                        <i data-lucide="target" class="w-4 h-4 text-slate-400"></i>
-                    </div>
-                    <div class="flex items-baseline justify-between">
-                        <span class="text-2xl font-bold text-slate-800">21%</span>
-                        <span class="flex items-center text-sm font-medium text-emerald-600">
-                            <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
-                            +2.5%
-                        </span>
-                    </div>
-                </div>
-                <div class="glass-card p-5 rounded-xl hover:shadow-lg transition-all cursor-pointer group">
-                    <div class="flex justify-between items-start mb-2">
-                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold">Rule of 40</p>
-                        <i data-lucide="trending-up" class="w-4 h-4 text-slate-400"></i>
-                    </div>
-                    <div class="flex items-baseline justify-between">
-                        <span class="text-2xl font-bold text-slate-800">51</span>
-                        <span class="flex items-center text-sm font-medium text-blue-600">
-                            <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
-                            +3
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Charts Row -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <!-- Revenue Forecast Chart -->
-                <div class="glass-card rounded-xl p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-bold text-slate-800">Rolling 12-Month Forecast</h3>
-                    </div>
-                    <div class="h-[300px]">
-                        <canvas id="revenueChart"></canvas>
+                <!-- AI Insight Banner -->
+                <div class="glass-card rounded-xl p-5 flex items-start space-x-4 mb-6">
+                    <div class="p-2 bg-blue-100 rounded-lg"><i data-lucide="activity" class="w-5 h-5 text-blue-600"></i></div>
+                    <div>
+                        <h4 class="text-slate-800 font-semibold text-sm mb-1">AI Strategic Guidance</h4>
+                        <p class="text-slate-600 text-sm leading-relaxed" id="ai-insight">With a Rule of 40 score of 51, you're outperforming industry benchmarks. Focus on maintaining growth momentum while protecting margins—consider strategic investments in automation to sustain the -3% variance recovery trajectory.</p>
                     </div>
                 </div>
 
-                <!-- Cash Flow Chart -->
-                <div class="glass-card rounded-xl p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-lg font-bold text-slate-800">Cash Flow Projection</h3>
-                        <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-lg font-medium">Runway: 18 Months</span>
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6" id="kpi-cards">
+                    <div class="glass-card p-5 rounded-xl hover:shadow-lg transition-all cursor-pointer group kpi-card" data-kpi="revenue" data-label="Total YTD Revenue" data-value="$47.2M" data-change="+24%">
+                        <div class="flex justify-between items-start mb-2">
+                            <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold">Total YTD Revenue</p>
+                            <i data-lucide="dollar-sign" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-2xl font-bold text-slate-800">$47.2M</span>
+                            <span class="flex items-center text-sm font-medium text-emerald-600"><i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>+24%</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-2">vs Previous YTD</p>
                     </div>
-                    <div class="h-[300px]">
-                        <canvas id="cashFlowChart"></canvas>
+                    <div class="glass-card p-5 rounded-xl hover:shadow-lg transition-all cursor-pointer group kpi-card" data-kpi="acv" data-label="In-Year Closed ACV" data-value="$12.4M" data-change="+18%">
+                        <div class="flex justify-between items-start mb-2">
+                            <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold">In-Year Closed ACV</p>
+                            <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-2xl font-bold text-slate-800">$12.4M</span>
+                            <span class="flex items-center text-sm font-medium text-blue-600"><i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>+18%</span>
+                        </div>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl hover:shadow-lg transition-all cursor-pointer group kpi-card" data-kpi="margin" data-label="EBITDA Margin" data-value="21%" data-change="+2.5%">
+                        <div class="flex justify-between items-start mb-2">
+                            <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold">EBITDA Margin</p>
+                            <i data-lucide="target" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-2xl font-bold text-slate-800">21%</span>
+                            <span class="flex items-center text-sm font-medium text-emerald-600"><i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>+2.5%</span>
+                        </div>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl hover:shadow-lg transition-all cursor-pointer group kpi-card" data-kpi="rule40" data-label="Rule of 40" data-value="51" data-change="+3">
+                        <div class="flex justify-between items-start mb-2">
+                            <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold">Rule of 40</p>
+                            <i data-lucide="trending-up" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-2xl font-bold text-slate-800">51</span>
+                            <span class="flex items-center text-sm font-medium text-blue-600"><i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>+3</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Bottom Row -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Rule of 40 Chart -->
-                <div class="lg:col-span-2 glass-card rounded-xl p-6">
-                    <h3 class="text-lg font-bold text-slate-800 mb-2">The "Rule of 40" Trajectory</h3>
-                    <p class="text-sm text-slate-500 mb-6">Balancing Growth Rate vs. Profit Margin (Target &gt; 40%)</p>
-                    <div class="h-[280px]">
-                        <canvas id="rule40Chart"></canvas>
+                <!-- Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="glass-card rounded-xl p-6">
+                        <h3 class="text-lg font-bold text-slate-800 mb-6">Rolling 12-Month Forecast</h3>
+                        <div class="h-[300px]"><canvas id="revenueChart"></canvas></div>
+                    </div>
+                    <div class="glass-card rounded-xl p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-bold text-slate-800">Cash Flow Projection</h3>
+                            <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-lg font-medium">Runway: 18 Months</span>
+                        </div>
+                        <div class="h-[300px]"><canvas id="cashFlowChart"></canvas></div>
                     </div>
                 </div>
 
-                <!-- Strategic Risks -->
-                <div class="glass-card rounded-xl p-6 flex flex-col">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4">Strategic Risks</h3>
-                    <div class="space-y-4 flex-1">
-                        <div class="p-4 rounded-lg bg-white/50 border border-slate-200 hover:border-slate-300 cursor-pointer transition-all group">
-                            <div class="flex justify-between items-start">
+                <!-- Bottom Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 glass-card rounded-xl p-6">
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">The "Rule of 40" Trajectory</h3>
+                        <p class="text-sm text-slate-500 mb-6">Balancing Growth Rate vs. Profit Margin (Target &gt; 40%)</p>
+                        <div class="h-[280px]"><canvas id="rule40Chart"></canvas></div>
+                    </div>
+                    <div class="glass-card rounded-xl p-6 flex flex-col">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">Strategic Risks</h3>
+                        <div class="space-y-4 flex-1" id="risk-cards">
+                            <div class="p-4 rounded-lg bg-white/50 border border-slate-200 hover:border-blue-300 cursor-pointer transition-all group risk-card" data-risk="revenue-variance">
                                 <div class="flex items-center space-x-2">
                                     <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-500"></i>
                                     <span class="font-medium text-slate-700 text-sm">Revenue Variance</span>
                                 </div>
+                                <p class="text-xs text-slate-500 mt-2">Enterprise segment underperforming by 8% vs. forecast due to delayed Q3 deals.</p>
+                                <div class="mt-2 flex justify-between items-center">
+                                    <span class="text-rose-600 font-mono text-xs font-bold">Impact: $450,000</span>
+                                    <span class="text-xs text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity flex items-center font-medium">Analyze <i data-lucide="arrow-right" class="w-3 h-3 ml-1"></i></span>
+                                </div>
                             </div>
-                            <p class="text-xs text-slate-500 mt-2">Enterprise segment underperforming by 8% vs. forecast due to delayed Q3 deals.</p>
-                            <div class="mt-2 flex justify-between items-center">
-                                <span class="text-rose-600 font-mono text-xs font-bold">Impact: $450,000</span>
-                                <span class="text-xs text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity flex items-center font-medium">
-                                    Analyze <i data-lucide="arrow-right" class="w-3 h-3 ml-1"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="p-4 rounded-lg bg-white/50 border border-slate-200 hover:border-slate-300 cursor-pointer transition-all group">
-                            <div class="flex justify-between items-start">
+                            <div class="p-4 rounded-lg bg-white/50 border border-slate-200 hover:border-blue-300 cursor-pointer transition-all group risk-card" data-risk="cost-overrun">
                                 <div class="flex items-center space-x-2">
                                     <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
                                     <span class="font-medium text-slate-700 text-sm">Cost Overrun</span>
                                 </div>
+                                <p class="text-xs text-slate-500 mt-2">Cloud infrastructure costs exceeding budget by 12% month-over-month.</p>
+                                <div class="mt-2 flex justify-between items-center">
+                                    <span class="text-rose-600 font-mono text-xs font-bold">Impact: $125,000</span>
+                                    <span class="text-xs text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity flex items-center font-medium">Analyze <i data-lucide="arrow-right" class="w-3 h-3 ml-1"></i></span>
+                                </div>
                             </div>
-                            <p class="text-xs text-slate-500 mt-2">Cloud infrastructure costs exceeding budget by 12% month-over-month.</p>
-                            <div class="mt-2 flex justify-between items-center">
-                                <span class="text-rose-600 font-mono text-xs font-bold">Impact: $125,000</span>
-                                <span class="text-xs text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity flex items-center font-medium">
-                                    Analyze <i data-lucide="arrow-right" class="w-3 h-3 ml-1"></i>
-                                </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Agent View -->
+            <div id="view-ai-agent" class="view p-8">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-slate-800">AI Financial Agent</h2>
+                    <p class="text-slate-500 mt-1">Ask questions about your financial data</p>
+                </div>
+                <div class="glass-card rounded-xl p-6 h-[calc(100vh-200px)] flex flex-col">
+                    <div class="flex-1 overflow-y-auto space-y-4 mb-4" id="chat-messages">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center"><i data-lucide="bot" class="w-4 h-4 text-blue-600"></i></div>
+                            <div class="glass-card rounded-lg p-4 max-w-[80%]">
+                                <p class="text-slate-700 text-sm">Hello! I'm your AI Financial Agent. I can help you analyze revenue trends, cost structures, forecast variances, and more. What would you like to explore today?</p>
                             </div>
+                        </div>
+                    </div>
+                    <div class="flex space-x-3">
+                        <input type="text" id="chat-input" placeholder="Ask about revenue, costs, forecasts..." class="flex-1 px-4 py-3 rounded-lg border border-slate-200 focus:outline-none focus:border-blue-500 text-sm">
+                        <button id="chat-send" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition-colors flex items-center">
+                            <i data-lucide="send" class="w-4 h-4 mr-2"></i>Send
+                        </button>
+                    </div>
+                    <div class="flex space-x-2 mt-3">
+                        <button class="quick-question px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 rounded-full text-slate-600 transition-colors">What's our Q3 forecast?</button>
+                        <button class="quick-question px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 rounded-full text-slate-600 transition-colors">Top cost drivers?</button>
+                        <button class="quick-question px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 rounded-full text-slate-600 transition-colors">Revenue by segment</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scenarios View -->
+            <div id="view-scenarios" class="view p-8">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-slate-800">Scenario Analysis</h2>
+                    <p class="text-slate-500 mt-1">Model different business scenarios</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="glass-card rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all scenario-card" data-scenario="base">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded font-medium">Base Case</span>
+                            <i data-lucide="check-circle" class="w-5 h-5 text-blue-600"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">Current Trajectory</h3>
+                        <p class="text-sm text-slate-500 mb-4">Maintaining current growth rate and cost structure</p>
+                        <div class="space-y-2">
+                            <div class="flex justify-between"><span class="text-slate-500 text-sm">Revenue Growth</span><span class="font-medium text-slate-800">24%</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500 text-sm">EBITDA Margin</span><span class="font-medium text-slate-800">21%</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500 text-sm">Rule of 40</span><span class="font-medium text-emerald-600">51</span></div>
+                        </div>
+                    </div>
+                    <div class="glass-card rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all scenario-card" data-scenario="growth">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs rounded font-medium">Growth</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">Aggressive Expansion</h3>
+                        <p class="text-sm text-slate-500 mb-4">Increase sales investment by 30%</p>
+                        <div class="space-y-2">
+                            <div class="flex justify-between"><span class="text-slate-500 text-sm">Revenue Growth</span><span class="font-medium text-emerald-600">35%</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500 text-sm">EBITDA Margin</span><span class="font-medium text-amber-600">15%</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500 text-sm">Rule of 40</span><span class="font-medium text-emerald-600">50</span></div>
+                        </div>
+                    </div>
+                    <div class="glass-card rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all scenario-card" data-scenario="conservative">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs rounded font-medium">Conservative</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">Profitability Focus</h3>
+                        <p class="text-sm text-slate-500 mb-4">Reduce costs, optimize margins</p>
+                        <div class="space-y-2">
+                            <div class="flex justify-between"><span class="text-slate-500 text-sm">Revenue Growth</span><span class="font-medium text-slate-800">18%</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500 text-sm">EBITDA Margin</span><span class="font-medium text-emerald-600">28%</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500 text-sm">Rule of 40</span><span class="font-medium text-emerald-600">46</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-6 mt-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Scenario Comparison</h3>
+                    <div class="h-[300px]"><canvas id="scenarioChart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- Revenue View -->
+            <div id="view-revenue" class="view p-8">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-slate-800">Revenue Analysis</h2>
+                    <p class="text-slate-500 mt-1">Deep dive into revenue streams and trends</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">Total Revenue YTD</p>
+                        <p class="text-2xl font-bold text-slate-800">$47.2M</p>
+                        <p class="text-sm text-emerald-600 mt-1">+24% vs LY</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">ARR</p>
+                        <p class="text-2xl font-bold text-slate-800">$58.4M</p>
+                        <p class="text-sm text-emerald-600 mt-1">+31% vs LY</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">Net Revenue Retention</p>
+                        <p class="text-2xl font-bold text-slate-800">118%</p>
+                        <p class="text-sm text-emerald-600 mt-1">+5pts vs LY</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="glass-card rounded-xl p-6">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">Revenue by Segment</h3>
+                        <div class="h-[300px]"><canvas id="revenueSegmentChart"></canvas></div>
+                    </div>
+                    <div class="glass-card rounded-xl p-6">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">Monthly Trend</h3>
+                        <div class="h-[300px]"><canvas id="revenueTrendChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cost View -->
+            <div id="view-cost" class="view p-8">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-slate-800">Cost Analysis</h2>
+                    <p class="text-slate-500 mt-1">Expense breakdown and optimization opportunities</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">Total OpEx</p>
+                        <p class="text-2xl font-bold text-slate-800">$37.3M</p>
+                        <p class="text-sm text-rose-600 mt-1">+18% vs LY</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">S&M</p>
+                        <p class="text-2xl font-bold text-slate-800">$15.2M</p>
+                        <p class="text-sm text-slate-500 mt-1">41% of OpEx</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">R&D</p>
+                        <p class="text-2xl font-bold text-slate-800">$12.8M</p>
+                        <p class="text-sm text-slate-500 mt-1">34% of OpEx</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">G&A</p>
+                        <p class="text-2xl font-bold text-slate-800">$9.3M</p>
+                        <p class="text-sm text-slate-500 mt-1">25% of OpEx</p>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Cost Breakdown by Department</h3>
+                    <div class="h-[350px]"><canvas id="costChart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- Sales View -->
+            <div id="view-sales" class="view p-8">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-slate-800">Sales Analytics</h2>
+                    <p class="text-slate-500 mt-1">Pipeline, velocity, and conversion metrics</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">Pipeline Value</p>
+                        <p class="text-2xl font-bold text-slate-800">$24.8M</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">Win Rate</p>
+                        <p class="text-2xl font-bold text-emerald-600">32%</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">Avg Deal Size</p>
+                        <p class="text-2xl font-bold text-slate-800">$48K</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">Sales Cycle</p>
+                        <p class="text-2xl font-bold text-slate-800">62 days</p>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Sales Funnel</h3>
+                    <div class="h-[350px]"><canvas id="salesFunnelChart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- Marketing View -->
+            <div id="view-marketing" class="view p-8">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-slate-800">Marketing Performance</h2>
+                    <p class="text-slate-500 mt-1">Campaign ROI and lead generation metrics</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">Marketing Spend</p>
+                        <p class="text-2xl font-bold text-slate-800">$4.2M</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">MQLs Generated</p>
+                        <p class="text-2xl font-bold text-slate-800">2,847</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">CAC</p>
+                        <p class="text-2xl font-bold text-slate-800">$12,400</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">LTV:CAC Ratio</p>
+                        <p class="text-2xl font-bold text-emerald-600">4.2x</p>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Channel Performance</h3>
+                    <div class="h-[350px]"><canvas id="marketingChart"></canvas></div>
+                </div>
+            </div>
+
+            <!-- Data Fabric View -->
+            <div id="view-data-fabric" class="view p-8">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-slate-800">Data Fabric</h2>
+                    <p class="text-slate-500 mt-1">Data sources, lineage, and quality metrics</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">Connected Sources</p>
+                        <p class="text-2xl font-bold text-slate-800">12</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">Data Quality Score</p>
+                        <p class="text-2xl font-bold text-emerald-600">94%</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">Last Sync</p>
+                        <p class="text-2xl font-bold text-slate-800">2 min ago</p>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Data Sources</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-4 bg-white/50 rounded-lg border border-slate-200">
+                            <div class="flex items-center space-x-3"><div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"><i data-lucide="database" class="w-5 h-5 text-blue-600"></i></div><div><p class="font-medium text-slate-800">Salesforce</p><p class="text-xs text-slate-500">CRM Data</p></div></div>
+                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs rounded font-medium">Connected</span>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-white/50 rounded-lg border border-slate-200">
+                            <div class="flex items-center space-x-3"><div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center"><i data-lucide="credit-card" class="w-5 h-5 text-purple-600"></i></div><div><p class="font-medium text-slate-800">Stripe</p><p class="text-xs text-slate-500">Billing Data</p></div></div>
+                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs rounded font-medium">Connected</span>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-white/50 rounded-lg border border-slate-200">
+                            <div class="flex items-center space-x-3"><div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center"><i data-lucide="file-spreadsheet" class="w-5 h-5 text-green-600"></i></div><div><p class="font-medium text-slate-800">QuickBooks</p><p class="text-xs text-slate-500">Accounting Data</p></div></div>
+                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs rounded font-medium">Connected</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Governance View -->
+            <div id="view-governance" class="view p-8">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-slate-800">Governance & Compliance</h2>
+                    <p class="text-slate-500 mt-1">Audit trail, approvals, and compliance status</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">Compliance Score</p>
+                        <p class="text-2xl font-bold text-emerald-600">98%</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">Pending Approvals</p>
+                        <p class="text-2xl font-bold text-amber-600">3</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">Audit Logs</p>
+                        <p class="text-2xl font-bold text-slate-800">1,247</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-xl">
+                        <p class="text-slate-500 text-xs uppercase tracking-wider font-semibold mb-2">Last Audit</p>
+                        <p class="text-2xl font-bold text-slate-800">Jan 15</p>
+                    </div>
+                </div>
+                <div class="glass-card rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4">Recent Activity</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-4 p-3 bg-white/50 rounded-lg">
+                            <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                            <div class="flex-1"><p class="text-sm text-slate-800">Q4 Budget approved by CFO</p><p class="text-xs text-slate-500">2 hours ago</p></div>
+                        </div>
+                        <div class="flex items-center space-x-4 p-3 bg-white/50 rounded-lg">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <div class="flex-1"><p class="text-sm text-slate-800">Revenue forecast updated</p><p class="text-xs text-slate-500">5 hours ago</p></div>
+                        </div>
+                        <div class="flex items-center space-x-4 p-3 bg-white/50 rounded-lg">
+                            <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
+                            <div class="flex-1"><p class="text-sm text-slate-800">Expense report pending review</p><p class="text-xs text-slate-500">1 day ago</p></div>
                         </div>
                     </div>
                 </div>
@@ -278,171 +499,364 @@
         </main>
     </div>
 
+    <!-- KPI Detail Modal -->
+    <div id="kpi-modal" class="modal">
+        <div class="modal-content glass-card rounded-xl w-full max-w-2xl mx-4">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-slate-800" id="kpi-modal-title">KPI Details</h3>
+                <button class="close-modal text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="p-6">
+                <div class="h-[300px]"><canvas id="kpiDetailChart"></canvas></div>
+            </div>
+            <div class="p-6 border-t border-slate-200 flex justify-end">
+                <button class="view-detail-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center">
+                    <i data-lucide="external-link" class="w-4 h-4 mr-2"></i>View Detailed Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Risk Analysis Modal -->
+    <div id="risk-modal" class="modal">
+        <div class="modal-content glass-card rounded-xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-gradient-to-r from-rose-50 to-white">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2 bg-rose-100 rounded-lg"><i data-lucide="alert-triangle" class="w-6 h-6 text-rose-600"></i></div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800">Strategic Anomaly Detected</h3>
+                        <p class="text-sm text-slate-500">Impact Assessment & Remediation</p>
+                    </div>
+                </div>
+                <button class="close-modal text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <div class="p-4 bg-slate-50 rounded-xl">
+                        <h4 class="text-sm font-bold text-slate-500 uppercase tracking-wide mb-3">Anomaly Profile</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between"><span class="text-slate-500">Metric</span><span class="text-slate-800 font-medium" id="risk-metric">Revenue Variance</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">Primary Driver</span><span class="text-blue-600 font-medium" id="risk-driver">Enterprise Sales</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">Financial Impact</span><span class="text-rose-600 font-mono font-bold" id="risk-impact">-$450,000</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">Severity</span><span class="text-rose-600 font-bold uppercase text-xs border border-rose-200 px-2 py-0.5 rounded bg-rose-50">HIGH</span></div>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-blue-50 rounded-xl border-l-4 border-blue-500">
+                        <h4 class="text-blue-700 font-bold mb-2 flex items-center"><i data-lucide="zap" class="w-4 h-4 mr-2"></i>AI Root Cause Analysis</h4>
+                        <p class="text-slate-700 text-sm leading-relaxed" id="risk-rca">Analysis indicates the variance stems from delayed enterprise deal closures in Q3. Three major contracts totaling $380K slipped to Q4 due to extended procurement cycles. Contributing factors include increased budget scrutiny at client organizations and longer legal review periods for new compliance requirements.</p>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="p-4 bg-white rounded-xl border border-slate-200">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-lg font-bold text-slate-800">Recommended Action Plan</h4>
+                            <button id="generate-plan-btn" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition-colors flex items-center">
+                                <i data-lucide="zap" class="w-3 h-3 mr-1"></i>Generate Plan
+                            </button>
+                        </div>
+                        <div id="action-plan-content" class="text-slate-600 text-sm">
+                            <p class="text-center py-8 text-slate-400">Click "Generate Plan" to create an AI-powered remediation strategy.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Initialize Lucide icons
         lucide.createIcons();
 
-        // Revenue Chart
-        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-        new Chart(revenueCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                datasets: [
-                    {
-                        label: 'Actual',
-                        data: [3800, 4100, 4300, 4000, 4500, 4700, null, null, null, null, null, null],
-                        backgroundColor: '#3b82f6',
-                        borderRadius: 4,
-                    },
-                    {
-                        label: 'Forecast',
-                        data: [null, null, null, null, null, null, 4900, 5100, 5300, 5500, 5700, 6000],
-                        backgroundColor: '#93c5fd',
-                        borderRadius: 4,
-                    },
-                    {
-                        label: 'Budget',
-                        data: [3900, 4000, 4200, 4100, 4600, 4800, 5000, 5200, 5400, 5600, 5800, 6100],
-                        type: 'line',
-                        borderColor: '#f59e0b',
-                        borderDash: [5, 5],
-                        fill: false,
-                        tension: 0.4,
-                        pointRadius: 0,
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { usePointStyle: true, padding: 20 }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        min: 3000,
-                        grid: { color: '#e2e8f0' },
-                        ticks: { callback: value => '$' + value }
-                    },
-                    x: { grid: { display: false } }
-                }
-            }
+        // State
+        let currentView = 'dashboard';
+        let charts = {};
+
+        // Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const view = item.dataset.view;
+                if (view) switchView(view);
+            });
         });
 
-        // Cash Flow Chart
-        const cashCtx = document.getElementById('cashFlowChart').getContext('2d');
-        new Chart(cashCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [
-                    {
-                        label: 'Net Cash Flow',
-                        data: [580, 620, 650, 600, 680, 710],
-                        backgroundColor: '#10b981',
-                        borderRadius: 4,
-                    },
-                    {
-                        label: 'Burn Rate Threshold',
-                        data: [-150, -150, -150, -150, -150, -150],
-                        type: 'line',
-                        borderColor: '#ef4444',
-                        borderDash: [5, 5],
-                        fill: false,
-                        pointRadius: 0,
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { usePointStyle: true, padding: 20 }
-                    }
-                },
-                scales: {
-                    y: {
-                        grid: { color: '#e2e8f0' },
-                        ticks: { callback: value => '$' + value }
-                    },
-                    x: { grid: { display: false } }
-                }
-            }
+        function switchView(view) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelector(`[data-view="${view}"]`).classList.add('active');
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(`view-${view}`).classList.add('active');
+            currentView = view;
+
+            // Initialize charts for the view
+            setTimeout(() => {
+                if (view === 'scenarios' && !charts.scenario) initScenarioChart();
+                if (view === 'revenue' && !charts.revenueSegment) initRevenueCharts();
+                if (view === 'cost' && !charts.cost) initCostChart();
+                if (view === 'sales' && !charts.salesFunnel) initSalesFunnelChart();
+                if (view === 'marketing' && !charts.marketing) initMarketingChart();
+                lucide.createIcons();
+            }, 100);
+        }
+
+        // KPI Cards Click
+        document.querySelectorAll('.kpi-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const kpi = card.dataset.kpi;
+                const label = card.dataset.label;
+                document.getElementById('kpi-modal-title').textContent = label + ' Trend Analysis';
+                document.getElementById('kpi-modal').classList.add('active');
+                initKPIDetailChart(kpi);
+            });
         });
 
-        // Rule of 40 Scatter Chart
-        const rule40Ctx = document.getElementById('rule40Chart').getContext('2d');
-        new Chart(rule40Ctx, {
-            type: 'scatter',
-            data: {
-                datasets: [
-                    {
-                        label: 'Competitors',
-                        data: [
-                            { x: 20, y: 10 },
-                            { x: 40, y: -10 },
-                            { x: 10, y: 25 },
-                            { x: 35, y: 5 },
-                            { x: 15, y: 20 }
-                        ],
-                        backgroundColor: '#94a3b8',
-                        pointRadius: 8,
-                    },
-                    {
-                        label: 'Us (Current)',
-                        data: [{ x: 21, y: 30 }],
-                        backgroundColor: '#3b82f6',
-                        pointRadius: 12,
-                        pointStyle: 'star',
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { usePointStyle: true, padding: 20 }
-                    },
-                    annotation: {
-                        annotations: {
-                            line1: {
-                                type: 'line',
-                                yMin: -20,
-                                yMax: 60,
-                                xMin: 0,
-                                xMax: 60,
-                                borderColor: '#10b981',
-                                borderWidth: 2,
-                                borderDash: [6, 6],
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        title: { display: true, text: 'Growth %' },
-                        min: 0,
-                        max: 60,
-                        grid: { color: '#e2e8f0' }
-                    },
-                    y: {
-                        title: { display: true, text: 'Margin %' },
-                        min: -20,
-                        max: 40,
-                        grid: { color: '#e2e8f0' }
-                    }
+        // Risk Cards Click
+        document.querySelectorAll('.risk-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const risk = card.dataset.risk;
+                if (risk === 'revenue-variance') {
+                    document.getElementById('risk-metric').textContent = 'Revenue Variance';
+                    document.getElementById('risk-driver').textContent = 'Enterprise Sales';
+                    document.getElementById('risk-impact').textContent = '-$450,000';
+                    document.getElementById('risk-rca').textContent = 'Analysis indicates the variance stems from delayed enterprise deal closures in Q3. Three major contracts totaling $380K slipped to Q4 due to extended procurement cycles.';
+                } else {
+                    document.getElementById('risk-metric').textContent = 'Cost Overrun';
+                    document.getElementById('risk-driver').textContent = 'Cloud Infrastructure';
+                    document.getElementById('risk-impact').textContent = '-$125,000';
+                    document.getElementById('risk-rca').textContent = 'Cloud costs exceeded budget due to unoptimized resource allocation. Analysis shows 40% of compute instances are oversized, and development environments are running 24/7 unnecessarily.';
                 }
-            }
+                document.getElementById('action-plan-content').innerHTML = '<p class="text-center py-8 text-slate-400">Click "Generate Plan" to create an AI-powered remediation strategy.</p>';
+                document.getElementById('risk-modal').classList.add('active');
+            });
         });
+
+        // Generate Action Plan
+        document.getElementById('generate-plan-btn').addEventListener('click', function() {
+            const btn = this;
+            const content = document.getElementById('action-plan-content');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-3 h-3 mr-1 animate-spin"></i>Generating...';
+            content.innerHTML = '<p class="text-center py-8 text-slate-400"><span class="typing-dots">Synthesizing remediation steps</span></p>';
+
+            setTimeout(() => {
+                content.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-2">
+                            <span class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                            <p><strong>Immediate:</strong> Schedule pipeline review with Enterprise sales leads to assess Q4 recovery potential.</p>
+                        </div>
+                        <div class="flex items-start space-x-2">
+                            <span class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                            <p><strong>Short-term:</strong> Implement deal acceleration program with executive sponsorship for delayed contracts.</p>
+                        </div>
+                        <div class="flex items-start space-x-2">
+                            <span class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+                            <p><strong>Process:</strong> Create fast-track legal review process for enterprise deals over $100K.</p>
+                        </div>
+                        <div class="flex items-start space-x-2">
+                            <span class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>
+                            <p><strong>Monitoring:</strong> Set up weekly enterprise pipeline health dashboard with early warning indicators.</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-slate-200 flex justify-end">
+                        <button class="text-emerald-600 text-xs font-bold flex items-center hover:underline">
+                            <i data-lucide="check-circle" class="w-4 h-4 mr-1"></i>Assign to Owner
+                        </button>
+                    </div>
+                `;
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="zap" class="w-3 h-3 mr-1"></i>Regenerate';
+                lucide.createIcons();
+            }, 2000);
+        });
+
+        // Close modals
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+            });
+        });
+
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.remove('active');
+            });
+        });
+
+        // View Detail Button
+        document.querySelector('.view-detail-btn').addEventListener('click', () => {
+            document.getElementById('kpi-modal').classList.remove('active');
+            switchView('revenue');
+        });
+
+        // Chat functionality
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const chatSend = document.getElementById('chat-send');
+
+        function addMessage(text, isUser = false) {
+            const div = document.createElement('div');
+            div.className = `flex items-start space-x-3 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`;
+            div.innerHTML = `
+                <div class="w-8 h-8 ${isUser ? 'bg-slate-200' : 'bg-blue-100'} rounded-full flex items-center justify-center">
+                    <i data-lucide="${isUser ? 'user' : 'bot'}" class="w-4 h-4 ${isUser ? 'text-slate-600' : 'text-blue-600'}"></i>
+                </div>
+                <div class="glass-card rounded-lg p-4 max-w-[80%]">
+                    <p class="text-slate-700 text-sm">${text}</p>
+                </div>
+            `;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            lucide.createIcons();
+        }
+
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            addMessage(text, true);
+            chatInput.value = '';
+
+            // Simulate AI response
+            setTimeout(() => {
+                const responses = {
+                    'forecast': 'Based on current trajectory, Q3 forecast shows $14.2M revenue with 95% confidence interval of $13.8M-$14.6M. Key drivers include strong enterprise pipeline and seasonal uptick in SMB segment.',
+                    'cost': 'Top 3 cost drivers this quarter: 1) Cloud Infrastructure ($2.1M, +12% MoM) 2) Sales Compensation ($1.8M, +8% MoM) 3) Marketing Programs ($1.2M, flat). I recommend reviewing cloud resource allocation for quick wins.',
+                    'revenue': 'Revenue by segment: Enterprise $28.4M (60%), Mid-Market $12.3M (26%), SMB $6.5M (14%). Enterprise showing strongest growth at 31% YoY.',
+                    'default': 'I can help you analyze that. Based on the current data, I see several interesting trends. Would you like me to dive deeper into any specific area like revenue breakdown, cost optimization, or forecast scenarios?'
+                };
+
+                let response = responses.default;
+                if (text.toLowerCase().includes('forecast') || text.toLowerCase().includes('q3')) response = responses.forecast;
+                else if (text.toLowerCase().includes('cost') || text.toLowerCase().includes('driver')) response = responses.cost;
+                else if (text.toLowerCase().includes('revenue') || text.toLowerCase().includes('segment')) response = responses.revenue;
+
+                addMessage(response);
+            }, 1500);
+        }
+
+        chatSend.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+        document.querySelectorAll('.quick-question').forEach(btn => {
+            btn.addEventListener('click', () => {
+                chatInput.value = btn.textContent;
+                sendMessage();
+            });
+        });
+
+        // Charts
+        function initDashboardCharts() {
+            // Revenue Chart
+            charts.revenue = new Chart(document.getElementById('revenueChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [
+                        { label: 'Actual', data: [3800, 4100, 4300, 4000, 4500, 4700, null, null, null, null, null, null], backgroundColor: '#3b82f6', borderRadius: 4 },
+                        { label: 'Forecast', data: [null, null, null, null, null, null, 4900, 5100, 5300, 5500, 5700, 6000], backgroundColor: '#93c5fd', borderRadius: 4 },
+                        { label: 'Budget', data: [3900, 4000, 4200, 4100, 4600, 4800, 5000, 5200, 5400, 5600, 5800, 6100], type: 'line', borderColor: '#f59e0b', borderDash: [5, 5], fill: false, tension: 0.4, pointRadius: 0 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } }, scales: { y: { beginAtZero: false, min: 3000, grid: { color: '#e2e8f0' }, ticks: { callback: v => '$' + v } }, x: { grid: { display: false } } } }
+            });
+
+            // Cash Flow Chart
+            charts.cashFlow = new Chart(document.getElementById('cashFlowChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [
+                        { label: 'Net Cash Flow', data: [580, 620, 650, 600, 680, 710], backgroundColor: '#10b981', borderRadius: 4 },
+                        { label: 'Burn Threshold', data: [-150, -150, -150, -150, -150, -150], type: 'line', borderColor: '#ef4444', borderDash: [5, 5], fill: false, pointRadius: 0 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } }, scales: { y: { grid: { color: '#e2e8f0' }, ticks: { callback: v => '$' + v } }, x: { grid: { display: false } } } }
+            });
+
+            // Rule of 40 Chart
+            charts.rule40 = new Chart(document.getElementById('rule40Chart'), {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        { label: 'Competitors', data: [{ x: 20, y: 10 }, { x: 40, y: -10 }, { x: 10, y: 25 }, { x: 35, y: 5 }, { x: 15, y: 20 }], backgroundColor: '#94a3b8', pointRadius: 8 },
+                        { label: 'Us (Current)', data: [{ x: 21, y: 30 }], backgroundColor: '#3b82f6', pointRadius: 12, pointStyle: 'star' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } }, scales: { x: { title: { display: true, text: 'Growth %' }, min: 0, max: 60, grid: { color: '#e2e8f0' } }, y: { title: { display: true, text: 'Margin %' }, min: -20, max: 40, grid: { color: '#e2e8f0' } } } }
+            });
+        }
+
+        function initKPIDetailChart(kpi) {
+            if (charts.kpiDetail) charts.kpiDetail.destroy();
+            const ctx = document.getElementById('kpiDetailChart');
+            const data = {
+                revenue: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], data: [38, 40, 42, 44, 46, 47.2], label: 'Revenue ($M)' },
+                acv: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], data: [8.2, 9.1, 10.0, 10.8, 11.6, 12.4], label: 'Closed ACV ($M)' },
+                margin: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], data: [18, 19, 19.5, 20, 20.5, 21], label: 'EBITDA Margin (%)' },
+                rule40: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], data: [45, 46, 48, 49, 50, 51], label: 'Rule of 40 Score' }
+            };
+            const d = data[kpi] || data.revenue;
+            charts.kpiDetail = new Chart(ctx, {
+                type: 'line',
+                data: { labels: d.labels, datasets: [{ label: d.label, data: d.data, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.4 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#e2e8f0' } }, x: { grid: { display: false } } } }
+            });
+        }
+
+        function initScenarioChart() {
+            charts.scenario = new Chart(document.getElementById('scenarioChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Revenue Growth', 'EBITDA Margin', 'Rule of 40'],
+                    datasets: [
+                        { label: 'Base Case', data: [24, 21, 51], backgroundColor: '#3b82f6' },
+                        { label: 'Growth', data: [35, 15, 50], backgroundColor: '#10b981' },
+                        { label: 'Conservative', data: [18, 28, 46], backgroundColor: '#f59e0b' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { grid: { color: '#e2e8f0' } }, x: { grid: { display: false } } } }
+            });
+        }
+
+        function initRevenueCharts() {
+            charts.revenueSegment = new Chart(document.getElementById('revenueSegmentChart'), {
+                type: 'doughnut',
+                data: { labels: ['Enterprise', 'Mid-Market', 'SMB'], datasets: [{ data: [60, 26, 14], backgroundColor: ['#3b82f6', '#10b981', '#f59e0b'] }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            });
+            charts.revenueTrend = new Chart(document.getElementById('revenueTrendChart'), {
+                type: 'line',
+                data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], datasets: [{ label: 'Revenue', data: [6.8, 7.2, 7.8, 8.1, 8.5, 8.8], borderColor: '#3b82f6', tension: 0.4, fill: true, backgroundColor: 'rgba(59,130,246,0.1)' }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#e2e8f0' }, ticks: { callback: v => '$' + v + 'M' } }, x: { grid: { display: false } } } }
+            });
+        }
+
+        function initCostChart() {
+            charts.cost = new Chart(document.getElementById('costChart'), {
+                type: 'bar',
+                data: { labels: ['S&M', 'R&D', 'G&A', 'Cloud', 'Other'], datasets: [{ label: 'Spend ($M)', data: [15.2, 12.8, 9.3, 4.2, 2.1], backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'] }] },
+                options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#e2e8f0' }, ticks: { callback: v => '$' + v + 'M' } }, y: { grid: { display: false } } } }
+            });
+        }
+
+        function initSalesFunnelChart() {
+            charts.salesFunnel = new Chart(document.getElementById('salesFunnelChart'), {
+                type: 'bar',
+                data: { labels: ['Leads', 'MQLs', 'SQLs', 'Opportunities', 'Closed Won'], datasets: [{ label: 'Count', data: [5200, 2847, 1420, 680, 218], backgroundColor: ['#93c5fd', '#60a5fa', '#3b82f6', '#2563eb', '#1d4ed8'] }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#e2e8f0' } }, x: { grid: { display: false } } } }
+            });
+        }
+
+        function initMarketingChart() {
+            charts.marketing = new Chart(document.getElementById('marketingChart'), {
+                type: 'bar',
+                data: { labels: ['Paid Search', 'Content', 'Events', 'Social', 'Email'], datasets: [{ label: 'Spend ($K)', data: [1200, 800, 1000, 600, 400], backgroundColor: '#3b82f6' }, { label: 'MQLs', data: [890, 720, 540, 380, 317], backgroundColor: '#10b981' }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { grid: { color: '#e2e8f0' } }, x: { grid: { display: false } } } }
+            });
+        }
+
+        // Initialize
+        initDashboardCharts();
     </script>
 </body>
 </html>
